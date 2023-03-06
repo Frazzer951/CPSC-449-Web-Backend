@@ -1,10 +1,10 @@
 import re
+from os import getenv
 
 import pymysql
-from flask import Flask, redirect, render_template, request, session, url_for, jsonify, abort
-from flask_cors import CORS
 from dotenv import load_dotenv
-from os import getenv
+from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
+from flask_cors import CORS
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
