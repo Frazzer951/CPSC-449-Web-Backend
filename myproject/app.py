@@ -1,7 +1,7 @@
 import re
 
 import pymysql
-from flask import Flask, redirect, render_template, request, session, url_for
+from flask import Flask, redirect, render_template, request, session, url_for, jsonify, abort
 from flask_cors import CORS
 from dotenv import load_dotenv
 from os import getenv
@@ -22,6 +22,16 @@ conn = pymysql.connect(
     cursorclass=pymysql.cursors.DictCursor,
 )
 cur = conn.cursor()
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify(error=str(e)), 404
+
+
+@app.errorhandler(401)
+def unauthorized(e):
+    return jsonify(error=str(e)), 401
 
 
 @app.route("/")
@@ -45,7 +55,10 @@ def login():
             session["id"] = account["id"]
             session["username"] = account["username"]
             msg = "Logged in successfully !"
-            return render_template("index.html", msg=msg)
+            if account["username"] == "admin":
+                return redirect(url_for("admin"))
+            else:
+                return render_template("index.html", msg=msg)
         else:
             msg = "Incorrect username / password !"
     return render_template("login.html", msg=msg)
@@ -121,6 +134,13 @@ def index():
     if "loggedin" in session:
         return render_template("index.html")
     return redirect(url_for("login"))
+
+
+@app.route("/admin")
+def admin():
+    if "loggedin" in session and session["username"] == "admin":
+        return render_template("admin.html")
+    return abort(401)
 
 
 @app.route("/display")
