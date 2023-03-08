@@ -1,4 +1,5 @@
 import re
+from datetime import timedelta
 from os import getenv
 
 import pymysql
@@ -10,6 +11,8 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.secret_key = "happykey"
+app.permanent_session_lifetime = timedelta(minutes=10)
+
 
 load_dotenv()
 
@@ -58,9 +61,12 @@ def login():
             if account["username"] == "admin":
                 return redirect(url_for("admin"))
             else:
-                return render_template("index.html", msg=msg)
+                return redirect(url_for("index"))
         else:
             msg = "Incorrect username / password !"
+
+    if "loggedin" in session:
+        return redirect(url_for("index"))
     return render_template("login.html", msg=msg)
 
 
