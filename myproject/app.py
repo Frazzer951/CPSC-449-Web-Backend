@@ -32,11 +32,6 @@ def page_not_found(e):
     return jsonify(error=str(e)), 404
 
 
-@app.errorhandler(401)
-def unauthorized(e):
-    return jsonify(error=str(e)), 401
-
-
 @app.route("/")
 @app.route("/login", methods=["GET", "POST"])
 def login():
