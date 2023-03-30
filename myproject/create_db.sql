@@ -1,3 +1,5 @@
+CREATE DATABASE 449_db;
+
 use 449_db;
 
 CREATE TABLE
